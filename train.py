@@ -24,7 +24,9 @@ def main():
                                    transforms.ToTensor(),
                                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])}
 
-    train_dataset = datasets.ImageFolder(root="the path of your train set",
+    DATA_SET_PATH = '/kaggle/input/alzheimersoriginaldataset/OriginalDataset'
+
+    train_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
                                          transform=data_transform["train"])
     train_num = len(train_dataset)
 
