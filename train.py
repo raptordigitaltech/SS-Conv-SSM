@@ -54,7 +54,7 @@ def main():
     print("using {} images for training, {} images for validation with {} classes".format(train_num,
                                                                            val_num, len(flower_list)))
 
-
+    model_name = "medmamba"
     net = medmamba(num_classes=len(flower_list))
     net.to(device)
     loss_function = nn.CrossEntropyLoss()
