@@ -48,12 +48,12 @@ def main():
     train_num = len(train_dataset)
 
     
-    #flower_list = train_dataset.class_to_idx
-    #cla_dict = dict((val, key) for key, val in flower_list.items())
-    ## write dict into json file
-    #json_str = json.dumps(cla_dict, indent=4)
-    #with open('class_indices.json', 'w') as json_file:
-    #    json_file.write(json_str)
+    flower_list = full_dataset.class_to_idx
+    cla_dict = dict((val, key) for key, val in flower_list.items())
+    # write dict into json file
+    json_str = json.dumps(cla_dict, indent=4)
+    with open('class_indices.json', 'w') as json_file:
+        json_file.write(json_str)
         
     # 4. Create DataLoaders for each split
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
@@ -75,7 +75,7 @@ def main():
                                                                            val_num))
 
     model_name = "medmamba"
-    net = medmamba(num_classes=3)
+    net = medmamba(num_classes=len(flower_list)
     net.to(device)
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=0.0001)
