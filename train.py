@@ -75,7 +75,7 @@ def main():
                                                                            val_num))
 
     model_name = "medmamba"
-    net = medmamba(num_classes=len(flower_list)
+    net = medmamba(num_classes=len(flower_list))
     net.to(device)
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=0.0001)
