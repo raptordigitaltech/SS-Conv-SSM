@@ -28,14 +28,6 @@ def main():
 
     full_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
                                          transform=data_transform["train"])
-    
-
-    flower_list = train_dataset.class_to_idx
-    cla_dict = dict((val, key) for key, val in flower_list.items())
-    # write dict into json file
-    json_str = json.dumps(cla_dict, indent=4)
-    with open('class_indices.json', 'w') as json_file:
-        json_file.write(json_str)
 
     batch_size = 32
     nw = min([os.cpu_count(), batch_size if batch_size > 1 else 0, 8])  # number of workers
@@ -55,6 +47,14 @@ def main():
     )
     train_num = len(train_dataset)
 
+    
+    flower_list = train_dataset.class_to_idx
+    cla_dict = dict((val, key) for key, val in flower_list.items())
+    # write dict into json file
+    json_str = json.dumps(cla_dict, indent=4)
+    with open('class_indices.json', 'w') as json_file:
+        json_file.write(json_str)
+        
     # 4. Create DataLoaders for each split
     train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
     #val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
@@ -65,7 +65,7 @@ def main():
                                                batch_size=batch_size, shuffle=True,
                                                num_workers=nw)
 
-    validate_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
+    #validate_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
                                             transform=data_transform["val"])
     val_num = len(val_dataset)
     validate_loader = torch.utils.data.DataLoader(val_dataset,
