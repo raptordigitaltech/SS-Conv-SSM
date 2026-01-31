@@ -65,8 +65,8 @@ def main():
                                                batch_size=batch_size, shuffle=True,
                                                num_workers=nw)
 
-    #validate_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
-                                            transform=data_transform["val"])
+    #validate_dataset = datasets.ImageFolder(root=DATA_SET_PATH,transform=data_transform["val"])
+    
     val_num = len(val_dataset)
     validate_loader = torch.utils.data.DataLoader(val_dataset,
                                                   batch_size=batch_size, shuffle=False,
