@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-
+from torchinfo import summary
 import torch
 import torch.nn as nn
 from torchvision import transforms, datasets
@@ -79,7 +79,9 @@ def main():
     net.to(device)
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=0.0001)
-
+    
+    summary(net, input_size=(1, 3, 224, 224))
+    
     epochs = 100
     best_acc = 0.0
     save_path = './{}Net.pth'.format(model_name)
