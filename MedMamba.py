@@ -151,7 +151,7 @@ class PatchEmbed2D(nn.Module):
         embed_dim (int): Number of linear projection output channels. Default: 96.
         norm_layer (nn.Module, optional): Normalization layer. Default: None
     """
-    def __init__(self, patch_size=4, in_chans=3, embed_dim=96, norm_layer=None, **kwargs):
+    def __init__(self, patch_size=4, in_chans=1, embed_dim=96, norm_layer=None, **kwargs):
         super().__init__()
         if isinstance(patch_size, int):
             patch_size = (patch_size, patch_size)
@@ -673,7 +673,7 @@ class VSSM(nn.Module):
         self.num_features = dims[-1]
         self.dims = dims
 
-        self.patch_embed = PatchEmbed2D(patch_size=patch_size, in_chans=in_chans, embed_dim=self.embed_dim,
+        self.patch_embed = PatchEmbed2D(patch_size=patch_size, in_chans=1, embed_dim=self.embed_dim,
             norm_layer=norm_layer if patch_norm else None)
 
         # WASTED absolute position embedding ======================
