@@ -71,5 +71,26 @@ def main():
             image_pil = to_pil(img_gray_avg[0])
             image_pil.show()
 
+            img_gray_avg_R = img_gray_avg[0]
+            img_gray_avg_G = img_gray_avg[0]
+            img_gray_avg_B = img_gray_avg[0]
+
+            images[0,0,:,:] = img_gray_avg[0,:,:]
+            images[0,1,:,:] = img_gray_avg[0,:,:]
+            images[0,2,:,:] = img_gray_avg[0,:,:]
+
+
+            print(images.shape)
+
+            to_pil = ToPILImage()
+            image_pil = to_pil(images[0,0])
+            image_pil.show()
+            to_pil = ToPILImage()
+            image_pil = to_pil(images[0,1])
+            image_pil.show()
+            to_pil = ToPILImage()
+            image_pil = to_pil(images[0,2])
+            image_pil.show()
+
 if __name__ == '__main__':
     main()
