@@ -94,7 +94,7 @@ def main():
         for step, data in enumerate(train_bar):
             images, labels = data
 
-            for image in images
+            for image in images:
                 img_gray_avg = image.mean(axis =0, keepdim=True)
                 image[0,:,:] = img_gray_avg 
                 image[1,:,:] = img_gray_avg 
@@ -121,7 +121,7 @@ def main():
             for val_data in val_bar:
                 val_images, val_labels = val_data
 
-                for image in val_images
+                for image in val_images:
                     img_gray_avg = image.mean(axis =0, keepdim=True)
                     image[0,:,:] = img_gray_avg 
                     image[1,:,:] = img_gray_avg 
