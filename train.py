@@ -1,13 +1,13 @@
 import os
 import sys
 import json
-
+from torchinfo import summary
 import torch
 import torch.nn as nn
 from torchvision import transforms, datasets
 import torch.optim as optim
 from tqdm import tqdm
-
+from torch.utils.data import Dataset, DataLoader, random_split
 from MedMamba import VSSM as medmamba # import model
 
 
@@ -26,40 +26,62 @@ def main():
 
     DATA_SET_PATH = '/kaggle/input/alzheimersoriginaldataset/OriginalDataset'
 
-    train_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
+    full_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
                                          transform=data_transform["train"])
-    train_num = len(train_dataset)
-
-    flower_list = train_dataset.class_to_idx
-    cla_dict = dict((val, key) for key, val in flower_list.items())
-    # write dict into json file
-    json_str = json.dumps(cla_dict, indent=4)
-    with open('class_indices.json', 'w') as json_file:
-        json_file.write(json_str)
 
     batch_size = 32
     nw = min([os.cpu_count(), batch_size if batch_size > 1 else 0, 8])  # number of workers
     print('Using {} dataloader workers every process'.format(nw))
 
+     # 2. Define split ratios and calculate lengths
+    train_size = int(0.9 * len(full_dataset))
+    val_size = int(0.1 * len(full_dataset))
+    test_size = len(full_dataset) - train_size - val_size # Adjust for any rounding issues
+
+    # Ensure reproducibility with a fixed seed
+    torch.manual_seed(42)
+
+    # 3. Perform the random split
+    train_dataset, val_dataset, test_dataset = random_split(
+        full_dataset, [train_size, val_size, test_size]
+    )
+    train_num = len(train_dataset)
+
+    
+    flower_list = full_dataset.class_to_idx
+    cla_dict = dict((val, key) for key, val in flower_list.items())
+    # write dict into json file
+    json_str = json.dumps(cla_dict, indent=4)
+    with open('class_indices.json', 'w') as json_file:
+        json_file.write(json_str)
+        
+    # 4. Create DataLoaders for each split
+    train_loader = DataLoader(train_dataset, batch_size=32, shuffle=True)
+    #val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+    
+
     train_loader = torch.utils.data.DataLoader(train_dataset,
                                                batch_size=batch_size, shuffle=True,
                                                num_workers=nw)
 
-    validate_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
-                                            transform=data_transform["val"])
-    val_num = len(validate_dataset)
-    validate_loader = torch.utils.data.DataLoader(validate_dataset,
+    #validate_dataset = datasets.ImageFolder(root=DATA_SET_PATH,transform=data_transform["val"])
+    
+    val_num = len(val_dataset)
+    validate_loader = torch.utils.data.DataLoader(val_dataset,
                                                   batch_size=batch_size, shuffle=False,
                                                   num_workers=nw)
-    print("using {} images for training, {} images for validation with {} classes".format(train_num,
-                                                                           val_num, len(flower_list)))
+    print("using {} images for training, {} images for validation ".format(train_num,
+                                                                           val_num))
 
     model_name = "medmamba"
     net = medmamba(num_classes=len(flower_list))
     net.to(device)
     loss_function = nn.CrossEntropyLoss()
     optimizer = optim.Adam(net.parameters(), lr=0.0001)
-
+    
+    summary(net, input_size=(1, 3, 224, 224))
+    
     epochs = 100
     best_acc = 0.0
     save_path = './{}Net.pth'.format(model_name)
