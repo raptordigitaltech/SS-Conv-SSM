@@ -54,8 +54,8 @@ def visualize_misclassifications(model, test_loader, device, class_names, num_im
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # 1. Load Model (Example for MedMamba_Tiny)
-model = MedMamba(num_classes=8).to(device) # Adjust num_classes to your dataset
-model.load_state_dict(torch.load("medMambaNet.pth", map_location=device))
+model = MedMamba(num_classes=3).to(device) # Adjust num_classes to your dataset
+model.load_state_dict(torch.load("/kaggle/input/datasets/rajab23456/medmambanet-pth", map_location=device))
 
 # 2. Data Loader (Ensure this matches your train/val transforms)
 transform = transforms.Compose([
