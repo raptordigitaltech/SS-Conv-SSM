@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from torchvision import datasets, transforms
 from torch.utils.data import DataLoader
-from MedMamba import MedMamba  # Ensure MedMamba.py is in the same folder
+from MedMamba import VSSM as MedMamba  # Ensure MedMamba.py is in the same folder
 
 def visualize_misclassifications(model, test_loader, device, class_names, num_images=10):
     model.eval()
