@@ -10,6 +10,14 @@ from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader, random_split
 from MedMamba import VSSM as medmamba # import model
 
+# Define the minimum file size in bytes (e.g., 10 KB)
+#This datasource has mask files which are smaller than the main images
+MIN_FILE_SIZE = 10 * 1024 
+
+def filter_by_size(file_path):
+    """Checks if a file meets the minimum size requirement."""
+    # Use os.path.getsize to get the file size in bytes
+    return os.path.getsize(file_path) >= MIN_FILE_SIZE
 
 def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -27,6 +35,7 @@ def main():
     DATA_SET_PATH = '/kaggle/input/datasets/ashimariam/adni-preprocessed-5class/ADNI_PHASE1_PROCESSED_20251116_081625/sagittal'
 
     full_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
+                                         is_valid_file=filter_by_size,
                                          transform=data_transform["train"])
 
     batch_size = 32
