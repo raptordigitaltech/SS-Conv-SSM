@@ -91,7 +91,7 @@ def main():
     
     summary(net, input_size=(1, 3, 224, 224))
     
-    epochs = 100
+    epochs = 25
     best_acc = 0.0
     save_path = './{}Net.pth'.format(model_name)
     train_steps = len(train_loader)
