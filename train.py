@@ -10,6 +10,16 @@ from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader, random_split
 from MedMamba import VSSM as medmamba # import model
 
+class FocalLoss(nn.Module):
+    def __init__(self, gamma=2):
+        super().__init__()
+        self.gamma = gamma
+
+    def forward(self, inputs, targets):
+        ce_loss = F.cross_entropy(inputs, targets, reduction='none')
+        pt = torch.exp(-ce_loss)
+        return ((1 - pt) ** self.gamma * ce_loss).mean()
+
 def is_valid_image(img):
     return not torch.isnan(img).any() and img.std() > 1e-5
     
@@ -80,7 +90,7 @@ def main():
     model_name = "medmamba"
     net = medmamba(num_classes=len(flower_list))
     net.to(device)
-    loss_function = nn.CrossEntropyLoss()
+    loss_function = FocalLoss()
     optimizer = optim.Adam(net.parameters(), lr=0.0001)
     
     summary(net, input_size=(1, 3, 224, 224))
