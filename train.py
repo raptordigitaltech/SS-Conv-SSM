@@ -10,7 +10,9 @@ from tqdm import tqdm
 from torch.utils.data import Dataset, DataLoader, random_split
 from MedMamba import VSSM as medmamba # import model
 
-
+def is_valid_image(img):
+    return not torch.isnan(img).any() and img.std() > 1e-5
+    
 def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("using {} device.".format(device))
@@ -25,6 +27,7 @@ def main():
                                    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])}
 
     DATA_SET_PATH = '/kaggle/input/alzheimersoriginaldataset/OriginalDataset'
+    DATA_SET_PATH = '/kaggle/input/datasets/rajab23456/adni1-3yr-1-5t-3244samples-sagittal'
 
     full_dataset = datasets.ImageFolder(root=DATA_SET_PATH,
                                          transform=data_transform["train"])
@@ -113,7 +116,14 @@ def main():
             val_bar = tqdm(validate_loader, file=sys.stdout)
             for val_data in val_bar:
                 val_images, val_labels = val_data
-                outputs = net(val_images.to(device))
+                mask = torch.tensor([is_valid_image(img) for img in images])
+                images = val_images[mask]
+                labels = val_labels[mask]
+        
+                if len(images) == 0:
+                    continue
+
+                outputs = net(images.to(device))
                 predict_y = torch.max(outputs, dim=1)[1]
                 acc += torch.eq(predict_y, val_labels.to(device)).sum().item()
 
